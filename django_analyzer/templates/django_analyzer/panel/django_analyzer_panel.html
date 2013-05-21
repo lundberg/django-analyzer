@@ -1,0 +1,93 @@
+<style type="text/css">
+    #djDebugProfilingPanel h2 {
+        font-size: 18px;
+        margin-top: 1em;
+    }
+    #djDebugProfilingPanel tbody tr:hover {
+        background-color: #ddd;
+    }
+
+    #djDebugProfilingPanel tr.child label:before {
+        content: '↳';
+    }
+
+    #djDebugProfilingPanel tr.block_stats span {
+        font-weight: bold;
+    }
+
+    #djDebugProfilingPanel tr.split_stats span {
+        font-style: italic;
+    }
+
+    #djDebugProfilingPanel .panelContent thead th.name,
+    #djDebugProfilingPanel td.name {
+        width: 30%;
+    }
+    #djDebugProfilingPanel .panelContent thead th.timeline,
+    #djDebugProfilingPanel td.timeline {
+        width: 70%;
+    }
+    #djDebugProfilingPanel th.time,
+    #djDebugProfilingPanel td.time {
+        white-space: nowrap;
+        text-align: right !important;
+    }
+    #djDebugProfilingPanel td.time {
+        padding-right: 1em !important;
+    }
+    #djDebugProfilingPanel tr.child td.time {
+        font-style: italic;
+        color: #666;
+    }
+    #djDebugProfilingPanel div.djDebugLineChart {
+        position: relative;
+    }
+
+    #djDebug tr.parent div.djDebugLineChart strong {
+        background-color: transparent;
+        box-shadow: inset 0 2px 0 1px #999;
+    }
+
+</style>
+
+<p>
+    Analyzed <strong>{{ timeline.count }}</strong> blocks in <strong>{{ timeline.total_block_time|floatformat:2 }}</strong> ms
+    of total <strong>{{ timeline.total_time|floatformat:2 }}</strong> ms request time.
+</p>
+
+<table>
+    <thead>
+        <tr>
+            <th class="name">Block</th>
+            <th class="timeline">Timeline</th>
+            <th class="time">Percent</th>
+            <th class="time">Time (ms)</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for stats in timeline.stats %}
+        <tr class="djDebugHoverable {% cycle 'djDebugOdd' '' %} {{ stats.type }}_stats {% if stats.is_parent %}parent{% else %}child{% endif %}">
+            <td class="name" style="padding-left:{{ stats.level }}em;">
+                <label>
+                    {% if stats.prefix %}{{ stats.prefix }}:{% endif %}
+                    <span>{{ stats.name }}</span>
+                </label>
+            </td>
+            <td class="timeline">
+                <div class="djDebugTimeline">
+                    <div class="djDebugLineChart" style="left:{{ stats.get_offset }};">
+                        <strong style="width:{{ stats.get_percent }};min-width:2px;">{{ stats.percent|floatformat:0 }}%</strong>
+                    </div>
+                </div>
+            </td>
+            <td class="time">{{ stats.percent|floatformat:0 }}%</td>
+            <td class="time">{{ stats.time|floatformat:2 }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<h2>Profiling stats</h2>
+<pre>
+    {{ profiler_stats }}
+</pre>

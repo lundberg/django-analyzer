@@ -1,0 +1,9 @@
+*.pyc
+_old
+/build/
+.idea/
+*.egg-info
+*.egg
+.DS_Store
+/.project
+/.pydevproject

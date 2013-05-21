@@ -1,0 +1,13 @@
+{% load monkey_analyzer %}
+<html>
+    <body>
+        {% block body %}
+            Lorem
+            {% measure 'hello' %}
+                ...
+            {% endmeasure %}
+            ipsum
+        {% endblock %}
+    </body>
+</html>
+
